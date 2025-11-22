@@ -35,16 +35,16 @@ jobs:
       - name: Update Block Rules
         run: |
           # 现在文件已更新到上游最新版本，添加自定义规则
-          if ! grep -q "! Custom Rule Added by Auto Update" sr_top500_whitelist_ad.conf; then
-            echo "! Custom Rule Added by Auto Update" >> sr_top500_whitelist_ad.conf
-            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,apple-relay.apple.com,Proxy' sr_top500_whitelist_ad.conf
-            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,gspe1-ssl.ls.apple.com,Proxy' sr_top500_whitelist_ad.conf
-            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,guzzoni.apple.com,Proxy' sr_top500_whitelist_ad.conf
-            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,apple-relay.cloudflare.com,Proxy' sr_top500_whitelist_ad.conf
-            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,apple-relay.fastly-edge.com,Proxy' sr_top500_whitelist_ad.conf
-            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,cp4.cloudflare.com,Proxy' sr_top500_whitelist_ad.conf
-            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,smoot.apple.com,Proxy' sr_top500_whitelist_ad.conf
-            #sed -i '/ls.apple.com,Direct/d sr_top500_whitelist_ad.conf
+          if ! grep -q "! Custom Rule Added by Auto Update" *.conf; then
+            echo "! Custom Rule Added by Auto Update" >> *.conf
+            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,apple-relay.apple.com,Proxy' *.conf
+            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,gspe1-ssl.ls.apple.com,Proxy' *.conf
+            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,guzzoni.apple.com,Proxy' *.conf
+            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,apple-relay.cloudflare.com,Proxy' *.conf
+            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,apple-relay.fastly-edge.com,Proxy' *.conf
+            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,cp4.cloudflare.com,Proxy' *.conf
+            sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,smoot.apple.com,Proxy' *.conf
+            #sed -i '/ls.apple.com,Direct/d *.conf
             echo "Custom rules added successfully"
           else
             echo "Custom rules already exist, skipping addition"
@@ -56,7 +56,7 @@ jobs:
           if git diff --quiet; then
             echo "No changes to commit"
           else
-            git add sr_top500_whitelist_ad.conf
+            git add *.conf
             git commit -m "Automated update: sync upstream and add custom rules"
             git push
           fi
