@@ -49,6 +49,16 @@ jobs:
           else
             echo "Custom rules already exist, skipping addition"
           fi
+      - name: Inject Intranet Rules
+        run: |
+          MARK="# Intranet routes (injected)"
+          for f in *.conf; do
+            grep -q "$MARK" "$f" && continue
+            { echo "$MARK"
+              echo "IP-CIDR,192.168.199.0/24,PROXY,no-resolve"
+              echo "IP-CIDR,172.31.0.0/16,PROXY,no-resolve"
+              cat "$f"; } > "$f.new" && mv "$f.new" "$f"
+          done
 
       - name: Commit Changes
         run: |
