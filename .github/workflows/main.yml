@@ -69,11 +69,16 @@ jobs:
                 s/,172\.16\.0\.0\/12//g
               }
             ' "$f"
-            # 2) 在 [Rule] 行下面插入两条显式 PROXY 规则（若文件没有 [Rule] 就跳过插入）
+            # 2) 在 [Rule] 行下面插入两条显式 PROXY 规则 + marker 注释+上下空行
+            #    （若文件没有 [Rule] 就跳过，纯 rule-provider 文件如 sr_ad_only.conf 自然跳过）
             if grep -q '^\[Rule\]' "$f"; then
               sed -i '/^\[Rule\]/a\
+          \
+          # --- Intranet routes (injected by CI) ---\
           IP-CIDR,192.168.199.0/24,PROXY,no-resolve\
-          IP-CIDR,172.31.0.0/16,PROXY,no-resolve' "$f"
+          IP-CIDR,172.31.0.0/16,PROXY,no-resolve\
+          # --- end intranet ---\
+          ' "$f"
             fi
             echo "Injected intranet rules into $f"
           done
