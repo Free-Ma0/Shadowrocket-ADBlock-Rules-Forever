@@ -51,13 +51,31 @@ jobs:
           fi
       - name: Inject Intranet Rules
         run: |
-          MARK="# Intranet routes (injected)"
           for f in *.conf; do
-            grep -q "$MARK" "$f" && continue
-            { echo "$MARK"
-              echo "IP-CIDR,192.168.199.0/24,PROXY,no-resolve"
-              echo "IP-CIDR,172.31.0.0/16,PROXY,no-resolve"
-              cat "$f"; } > "$f.new" && mv "$f.new" "$f"
+            [ -f "$f" ] || continue
+            # 1) 从 skip-proxy 和 bypass-tun 行里剔除 192.168.0.0/16 和 172.16.0.0/12
+            #    (只在 skip-proxy= 和 bypass-tun= 这两行上操作，避免误伤规则体)
+            sed -i -E '
+              /^skip-proxy\s*=/ {
+                s/192\.168\.0\.0\/16,\s*//g
+                s/,\s*192\.168\.0\.0\/16//g
+                s/172\.16\.0\.0\/12,\s*//g
+                s/,\s*172\.16\.0\.0\/12//g
+              }
+              /^bypass-tun\s*=/ {
+                s/192\.168\.0\.0\/16,?//g
+                s/,192\.168\.0\.0\/16//g
+                s/172\.16\.0\.0\/12,?//g
+                s/,172\.16\.0\.0\/12//g
+              }
+            ' "$f"
+            # 2) 在 [Rule] 行下面插入两条显式 PROXY 规则（若文件没有 [Rule] 就跳过插入）
+            if grep -q '^\[Rule\]' "$f"; then
+              sed -i '/^\[Rule\]/a\
+              IP-CIDR,192.168.199.0/24,PROXY,no-resolve\
+              IP-CIDR,172.31.0.0/16,PROXY,no-resolve' "$f"
+            fi
+            echo "Injected intranet rules into $f"
           done
 
       - name: Commit Changes
