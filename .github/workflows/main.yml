@@ -72,8 +72,8 @@ jobs:
             # 2) 在 [Rule] 行下面插入两条显式 PROXY 规则（若文件没有 [Rule] 就跳过插入）
             if grep -q '^\[Rule\]' "$f"; then
               sed -i '/^\[Rule\]/a\
-              IP-CIDR,192.168.199.0/24,PROXY,no-resolve\
-              IP-CIDR,172.31.0.0/16,PROXY,no-resolve' "$f"
+          IP-CIDR,192.168.199.0/24,PROXY,no-resolve\
+          IP-CIDR,172.31.0.0/16,PROXY,no-resolve' "$f"
             fi
             echo "Injected intranet rules into $f"
           done
