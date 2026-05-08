@@ -44,7 +44,7 @@ jobs:
             sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,apple-relay.fastly-edge.com,Proxy' *.conf
             sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,cp4.cloudflare.com,Proxy' *.conf
             sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,smoot.apple.com,Proxy' *.conf
-            sed -i -E '/^DOMAIN-SUFFIX,[^,]*push\.apple\.com,/d' *.conf
+            sed -i -E 's/(push\.apple\.com),Direct/\1,Proxy/g' *.conf
             sed -i '/苹果域名及其 CDN 代理/a\DOMAIN-SUFFIX,push.apple.com,Proxy' *.conf
             sed -i '/ls.apple.com,Direct/d' *.conf
             echo "Custom rules added successfully"
